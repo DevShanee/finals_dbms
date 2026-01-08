@@ -2,7 +2,19 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import psycopg2
 from datetime import date
-import psycopg2
+import pyttsx3
+import threading
+import tempfile
+import os
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+import pygame
+
+
+engine = pyttsx3.init()
+pygame.mixer.init()
+
 
 
 # ---------- PostgreSQL config ----------
@@ -12,9 +24,6 @@ DB_USER = "Shane"
 DB_PASSWORD = "081824"
 DB_PORT = "5432"
 
-# ---------- hardcoded login ----------
-HARDCODED_USERNAME = "admin"
-HARDCODED_PASSWORD = "admin123"
 
 BG_MAIN = "#ffccdd"
 BG_HEADER = "#a7c7ff"
@@ -92,6 +101,7 @@ def init_stories_table():
     cur.execute("""
         CREATE TABLE IF NOT EXISTS stories (
             id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
             favorite BOOLEAN DEFAULT FALSE,
             title TEXT NOT NULL,
             author TEXT,
@@ -166,11 +176,23 @@ def load_stories_to_tree():
 
     con = get_connection()
     cur = con.cursor()
-    cur.execute("""
-        SELECT id, favorite, title, author, genre, date_started, date_completed,
-               status, num_chapters, word_count, main_character, last_updated, preview
-        FROM stories ORDER BY id
-    """)
+
+    if is_admin:
+        cur.execute("""
+            SELECT id, favorite, title, author, genre, date_started, date_completed,
+                   status, num_chapters, word_count, main_character, last_updated, preview
+            FROM stories
+            ORDER BY id
+        """)
+    else:
+        cur.execute("""
+            SELECT id, favorite, title, author, genre, date_started, date_completed,
+                   status, num_chapters, word_count, main_character, last_updated, preview
+            FROM stories
+            WHERE user_id = %s
+            ORDER BY id
+        """, (current_user_id,))
+
     rows = cur.fetchall()
     con.close()
 
@@ -184,13 +206,20 @@ def load_stories_to_tree():
         ))
 
 def save_story_to_db():
+    global current_user_id
+
     con = get_connection()
     cur = con.cursor()
     cur.execute("""
-        INSERT INTO stories (favorite, title, author, genre, date_started, date_completed,
-                             status, num_chapters, word_count, main_character, last_updated)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO stories (
+            user_id, favorite, title, author, genre,
+            date_started, date_completed, status,
+            num_chapters, word_count, main_character,
+            last_updated, preview
+        )
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """, (
+        current_user_id,
         fav_var.get(),
         story_title.get(),
         author_entry.get(),
@@ -201,8 +230,10 @@ def save_story_to_db():
         int(num_chaps.get() or 0),
         int(word_count.get() or 0),
         main_char.get(),
-        last_upd.get() or None
+        last_upd.get() or None,
+        preview_text.get("1.0", "end").strip()
     ))
+
     con.commit()
     con.close()
     load_stories_to_tree()
@@ -221,9 +252,11 @@ def update_story_in_db():
     cur = con.cursor()
     cur.execute("""
         UPDATE stories
-        SET favorite = %s, title = %s, author = %s, genre = %s,
-            date_started = %s, date_completed = %s, status = %s,
-            num_chapters = %s, word_count = %s, main_character = %s, last_updated = %s
+       SET favorite = %s, title = %s, author = %s, genre = %s,
+    date_started = %s, date_completed = %s, status = %s,
+    num_chapters = %s, word_count = %s, main_character = %s,
+    last_updated = %s, preview = %s
+
         WHERE id = %s
     """, (
         fav_var.get(),
@@ -237,6 +270,7 @@ def update_story_in_db():
         int(word_count.get() or 0),
         main_char.get(),
         last_upd.get() or None,
+        preview_text.get("1.0", "end").strip(),
         story_id
     ))
     con.commit()
@@ -306,13 +340,12 @@ status_var = None
 num_chaps = None
 word_count = None
 main_char = None
+preview_text = None
 last_upd = None
 fav_var = None
 tree = None
 is_admin = False
 current_user_id = None
-
-
 
 
 def clear_form():
@@ -323,11 +356,14 @@ def clear_form():
     status_var.set("")
     fav_var.set(False)
 
+    if preview_text:
+        preview_text.delete("1.0", "end")
+
 # ---------- main app ----------
 def start_main_app(login_root):
     global streak_lbl, longest_lbl, story_title, author_entry, genre_var
     global date_started, date_completed, status_var, num_chaps
-    global word_count, main_char, last_upd, fav_var, tree
+    global word_count, main_char, last_upd, fav_var, tree, preview_text
 
     login_root.withdraw()
 
@@ -483,6 +519,18 @@ def start_main_app(login_root):
     main_char = add_row(3, 0, "Main Character:")
     last_upd = add_row(3, 2, "Last Updated:")
 
+    # ---- Preview / Synopsis ----
+    preview_lbl = tk.Label(
+        form_frame,
+        text="Preview / Synopsis:",
+        bg=BG_MAIN,
+        font=("Monotype Corsiva", 11)
+    )
+    preview_lbl.grid(row=4, column=0, sticky="nw", padx=4, pady=3)
+
+    preview_text = tk.Text(form_frame, width=55, height=3)
+    preview_text.grid(row=4, column=1, columnspan=5, padx=4, pady=3)
+
     right_frame = tk.Frame(top_row, bg=BG_MAIN, bd=2, relief="groove")
     right_frame.pack(side="right", fill="y", padx=(10, 0))
 
@@ -610,6 +658,9 @@ def start_main_app(login_root):
         last_upd.insert(0, values[11] or "")
         fav_var.set(values[1] == "★")
 
+        preview_text.delete("1.0", "end")
+        preview_text.insert("1.0", values[12] or "")
+
         # Update progress label ONLY
         total_words = get_story_word_count(story_id)
         progress_lbl.config(text=f"Words written: {total_words}")
@@ -676,6 +727,43 @@ def start_main_app(login_root):
         text.tag_config("chap_title", font=("Monotype Corsiva", 12, "bold"))
         text.config(state="disabled")
 
+        # ---------- AUDIO PLAYER UI ----------
+        player_frame = tk.Frame(win, bg=BG_MAIN)
+        player_frame.pack(fill="x", padx=10, pady=5)
+
+        tk.Button(
+            player_frame, text="▶ Play",
+            font=("Monotype Corsiva", 11),
+            command=lambda: play_audio()
+        ).pack(side="left", padx=5)
+
+        tk.Button(
+            player_frame, text="⏸ Pause",
+            font=("Monotype Corsiva", 11),
+            command=pause_audio
+        ).pack(side="left", padx=5)
+
+        tk.Button(
+            player_frame, text="▶ Resume",
+            font=("Monotype Corsiva", 11),
+            command=resume_audio
+        ).pack(side="left", padx=5)
+
+        tk.Button(
+            player_frame, text="⏹ Stop",
+            font=("Monotype Corsiva", 11),
+            command=stop_audio
+        ).pack(side="left", padx=5)
+
+        # Convert full story text to audio
+        full_text = ""
+        for chap_no, content in chapters:
+            full_text += f"Chapter {chap_no}\n{content}\n\n"
+
+        if full_text.strip():
+            chapter_to_audio(full_text)
+
+
     def read_story():
         selected = tree_local.selection()
         if not selected:
@@ -686,6 +774,32 @@ def start_main_app(login_root):
         values = item["values"]
 
         open_read_window_for_story(values)
+
+    # ---------- audio helpers ----------
+    AUDIO_FILE = "chapter_audio.wav"
+
+    def chapter_to_audio(text):
+        if os.path.exists(AUDIO_FILE):
+            os.remove(AUDIO_FILE)
+
+        engine.save_to_file(text, AUDIO_FILE)
+        engine.runAndWait()
+        return AUDIO_FILE
+
+    def play_audio():
+        if not os.path.exists(AUDIO_FILE):
+            return
+        pygame.mixer.music.load(AUDIO_FILE)
+        pygame.mixer.music.play()
+
+    def pause_audio():
+        pygame.mixer.music.pause()
+
+    def resume_audio():
+        pygame.mixer.music.unpause()
+
+    def stop_audio():
+        pygame.mixer.music.stop()
 
     def add_to_library():
         sel = tree_local.selection()
@@ -760,7 +874,7 @@ def start_main_app(login_root):
             canvas.create_line(6, 12, 6, 58, fill="#444")
             canvas.create_line(84, 12, 84, 58, fill="#444")
 
-            title_text = row_val[2] or "Title of the Story"
+            title_text = row_val[1] or "Title of the Story"
             lbl = tk.Label(
                 tile, text=title_text, bg=BG_MAIN,
                 font=("Monotype Corsiva", 10)
@@ -768,7 +882,14 @@ def start_main_app(login_root):
             lbl.pack(pady=(6, 0))
 
             def make_handler(row_copy=row_val):
-                return lambda e=None: open_read_window_for_story(row_copy)
+                tree_style_row = (
+                    row_copy[0],  # id
+                    "",  # fav placeholder
+                    row_copy[1],  # title
+                    row_copy[2],  # author
+                    row_copy[3],  # genre
+                )
+                return lambda e=None: open_read_window_for_story(tree_style_row)
 
             tile.bind("<Button-1>", make_handler())
             canvas.bind("<Button-1>", make_handler())
