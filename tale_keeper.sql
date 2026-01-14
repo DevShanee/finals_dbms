@@ -1,399 +1,1310 @@
---
--- PostgreSQL database dump
---
-
-\restrict I5003rgaZxHcbTJ3hZGaov4PwkeEighmVFtEjGtK5XsUH5uw0skoTRA3OM5qVTu
-
--- Dumped from database version 18.1
--- Dumped by pg_dump version 18.1
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET transaction_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
-
---
--- Name: chapters; Type: TABLE; Schema: public; Owner: Shane
---
-
-CREATE TABLE public.chapters (
-    id integer NOT NULL,
-    story_id integer NOT NULL,
-    chapter_no integer NOT NULL,
-    content text NOT NULL,
-    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
-);
-
-
-ALTER TABLE public.chapters OWNER TO "Shane";
-
---
--- Name: chapters_id_seq; Type: SEQUENCE; Schema: public; Owner: Shane
---
-
-CREATE SEQUENCE public.chapters_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.chapters_id_seq OWNER TO "Shane";
-
---
--- Name: chapters_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: Shane
---
-
-ALTER SEQUENCE public.chapters_id_seq OWNED BY public.chapters.id;
-
-
---
--- Name: reading_streak; Type: TABLE; Schema: public; Owner: Shane
---
-
-CREATE TABLE public.reading_streak (
-    id integer NOT NULL,
-    last_read_date date,
-    current_streak integer DEFAULT 0,
-    longest_streak integer DEFAULT 0,
-    CONSTRAINT reading_streak_id_check CHECK ((id = 1))
-);
-
-
-ALTER TABLE public.reading_streak OWNER TO "Shane";
-
---
--- Name: stories; Type: TABLE; Schema: public; Owner: Shane
---
-
-CREATE TABLE public.stories (
-    id integer NOT NULL,
-    favorite boolean DEFAULT false,
-    title text NOT NULL,
-    author text,
-    genre text,
-    date_started date,
-    date_completed date,
-    status text,
-    num_chapters integer DEFAULT 0,
-    word_count integer DEFAULT 0,
-    main_character text,
-    last_updated date,
-    preview text DEFAULT ''::text,
-    target_words integer DEFAULT 0,
-    user_id integer
-);
-
-
-ALTER TABLE public.stories OWNER TO "Shane";
-
---
--- Name: stories_id_seq; Type: SEQUENCE; Schema: public; Owner: Shane
---
-
-CREATE SEQUENCE public.stories_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.stories_id_seq OWNER TO "Shane";
-
---
--- Name: stories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: Shane
---
-
-ALTER SEQUENCE public.stories_id_seq OWNED BY public.stories.id;
-
-
---
--- Name: story_streaks; Type: TABLE; Schema: public; Owner: Shane
---
-
-CREATE TABLE public.story_streaks (
-    story_id integer NOT NULL,
-    last_read_date date,
-    current_streak integer DEFAULT 0,
-    longest_streak integer DEFAULT 0
-);
-
-
-ALTER TABLE public.story_streaks OWNER TO "Shane";
-
---
--- Name: user_streak; Type: TABLE; Schema: public; Owner: Shane
---
-
-CREATE TABLE public.user_streak (
-    user_id integer NOT NULL,
-    last_read_date date,
-    current_streak integer DEFAULT 0,
-    longest_streak integer DEFAULT 0
-);
-
-
-ALTER TABLE public.user_streak OWNER TO "Shane";
-
---
--- Name: users; Type: TABLE; Schema: public; Owner: Shane
---
-
-CREATE TABLE public.users (
-    id integer NOT NULL,
-    username character varying(50) NOT NULL,
-    role character varying(20) DEFAULT 'user'::character varying,
-    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    password text,
-    is_admin boolean DEFAULT false,
-    longest_streak integer DEFAULT 0,
-    last_read_date date,
-    current_streak integer DEFAULT 0
-);
-
-
-ALTER TABLE public.users OWNER TO "Shane";
-
---
--- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: Shane
---
-
-CREATE SEQUENCE public.users_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.users_id_seq OWNER TO "Shane";
-
---
--- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: Shane
---
-
-ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
-
-
---
--- Name: chapters id; Type: DEFAULT; Schema: public; Owner: Shane
---
-
-ALTER TABLE ONLY public.chapters ALTER COLUMN id SET DEFAULT nextval('public.chapters_id_seq'::regclass);
-
-
---
--- Name: stories id; Type: DEFAULT; Schema: public; Owner: Shane
---
-
-ALTER TABLE ONLY public.stories ALTER COLUMN id SET DEFAULT nextval('public.stories_id_seq'::regclass);
-
-
---
--- Name: users id; Type: DEFAULT; Schema: public; Owner: Shane
---
-
-ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
-
-
---
--- Data for Name: chapters; Type: TABLE DATA; Schema: public; Owner: Shane
---
-
-COPY public.chapters (id, story_id, chapter_no, content, created_at) FROM stdin;
-4	5	1	I walked deeper into the labyrinth. The silence here wasn't empty; it was heavy, as if the books were holding their breath, waiting to be noticed. My hand brushed against a row of vellum covers until, at the very end of a dark corridor, I felt a strange tingle in my fingertips.\n\nThere it was. A small volume, its leather binding scarred by time. There was no gold leaf on the spine, only a title that seemed to shimmer in the low light:\n\nAs I pulled it from the shelf, a cold draft swept through the room, extinguishing a nearby candle. I didn't know then that by taking this book, I was opening a door to a ghost story that had been waiting decades for a new ending. I didn't know that some shadows never truly leave the person they belong to.	2025-12-18 16:20:47.381305
-5	8	1	“Baka Sakali 1” is a published Wattpad novel by Jonaxx, so the full text of Chapter 1 is copyrighted and cannot be reproduced verbatim here. However, the chapter opens with Rosie narrating how her family, who are struggling financially, are moving out of their rented house and heading to her grandmother’s place in Alegria, which she resents because it reminds her that they are poor and must leave the life she’s used to in the city.	2025-12-18 17:44:58.950287
-6	9	1	The heat in Alegria was different from the city. It wasn’t just the sun; it was the way the air seemed to hold onto the scent of the earth and the distant sea, thick with a stillness that made my heart beat louder than it should. I stepped out of the car, the gravel crunching beneath my designer sandals, a sound that felt too loud for the quiet afternoon.\n\nI looked up at the old gates of the Montefalco estate. It had been years, but the shadow it cast still felt the same—heavy and permanent.\n\n"Entice," my mother’s voice came from inside the car, sharp and reminding. "Try to be on your best behavior. We aren't here for a vacation."\n\nI didn't answer. I couldn't. My eyes were fixed on the porch, where a figure stood watching us. Even from this distance, I knew the stance. I knew the way he crossed his arms over his chest, his presence commanding the space around him without saying a word.\n\nKnoxx Gideon Montefalco.\n\nThe last time I saw him, I was a girl who didn't know how to hide her feelings. Now, I was a woman who had learned to mask everything behind a polished smile and expensive clothes. But as our eyes met across the distance, that mask felt dangerously thin.\n\nHe didn't move to help with the bags. He didn't offer a welcoming smile. He just stood there, his dark eyes unreadable, reminding me exactly why I had spent so many years trying to stay away.\n\n"Welcome back," he said when I finally reached the steps. His voice was deeper than I remembered, a low rumble that sent a chill down my spine despite the afternoon heat.\n\n"I didn't think you'd be here, Knoxx," I replied, my voice steadier than I felt.\n\nA ghost of a smirk touched his lips, but it didn't reach his eyes. "This is my home, Entice. I’m always here. It’s you who keeps running."\n\nI gripped the strap of my bag until my knuckles turned white. I wasn't running anymore. But looking at him now, standing in the sunlight of the town that made him a king, I realized that staying might be the hardest thing I’d ever have to do.	2026-01-03 14:45:05.463406
-7	9	2	The dinner table at the Montefalco house was an exercise in endurance. The clinking of silver against porcelain was the only thing filling the void where conversation should have been. My mother was busy charming Knoxx’s parents, weaving stories of our life in the city, but I could barely swallow.\n\nI felt his gaze before I saw it. Knoxx sat directly across from me, his presence like a dark cloud in the periphery of my vision. Every time I looked up, he was already there, watching me with a cold, analytical intensity that made me want to shrink into my seat.\n\n"You're not eating, Entice," Knoxx remarked, his voice cutting through my mother’s chatter.\n\nEveryone stopped talking. I forced a smile and picked up my fork. "Just not very hungry, Knoxx. The heat, I guess."\n\n"Or maybe you've just grown too used to city food," he countered. There was a bite to his words, a subtle reminder that he viewed me as an outsider now. "Alegria is too simple for you these days, isn't it?"\n\n"Knoxx, leave her alone," his mother said gently, but he didn't look away from me.\n\n"I'm just making conversation, Ma," he said, though his eyes told a different story. He leaned back, his shoulders broad against the mahogany chair. "I was just wondering how long she’s planning to stay before she finds a reason to leave again."\n\nThe air in the room felt thinner. I met his eyes, refusing to let him see me flinch. "I'm staying as long as I need to, Knoxx. You don't have to worry about me running."\n\n"I don't worry about you at all," he lied. The lie was so blatant it almost stung.\n\nAfter dinner, I sought refuge on the balcony, looking out over the dark expanse of the estate. The crickets were loud, a rhythmic pulsing in the night. I thought I was alone until the scent of expensive tobacco and something uniquely him drifted toward me.\n\n"The city didn't change you as much as you think," he said, leaning against the railing a few feet away. The orange glow of his cigarette lit the sharp angles of his face.\n\n"And you haven't changed at all," I whispered.\n\nHe took a slow drag, the smoke curling around him like a shroud. "That's where you're wrong, Entice. I've changed the most. I stopped waiting."\n\nHe stepped closer, the heat radiating off his body overshadowing the cool night breeze. For a second, I thought he might touch me, but he simply walked past, leaving me alone in the dark with the realization that the boy I once loved was gone, and the man who replaced him was far more dangerous.	2026-01-03 14:46:27.880428
-\.
-
-
---
--- Data for Name: reading_streak; Type: TABLE DATA; Schema: public; Owner: Shane
---
-
-COPY public.reading_streak (id, last_read_date, current_streak, longest_streak) FROM stdin;
-1	2026-01-04	1	2
-\.
-
-
---
--- Data for Name: stories; Type: TABLE DATA; Schema: public; Owner: Shane
---
-
-COPY public.stories (id, favorite, title, author, genre, date_started, date_completed, status, num_chapters, word_count, main_character, last_updated, preview, target_words, user_id) FROM stdin;
-7	f	Under a Copper Sky		Adventure	2025-01-10	2025-06-15	Completed	0	0	Captain Silas Thorne	2025-12-18	In a city floating above a toxic wasteland, the engines are failing. A disgraced airship pilot is hired to find the "Primal Gear," a legendary power source. He soon discovers that the floating city was never meant to stay in the air, and some people will kill to keep it from landing.	0	\N
-6	t	The Echo of the Ink		Mystery	2025-01-10	2025-06-15	Completed	0	0	Elara Vance	2025-12-18	A struggling archivist discovers a book that writes itself in real-time, detailing a murder that hasn't happened yet. As she tries to prevent the crime, she realizes the book is drawing ink from her own memories, slowly erasing her past to fuel the narrative.	0	\N
-8	t	Baka Sakali	Jonaxx	Romance	2013-05-15	2013-12-15	Completed	1	76	Jacob/Roseanne	2025-12-18		0	6
-5	f	The Shadow of the Wind	Carlos Ruiz Zafón	Mystery	2001-04-08	2005-04-26	Completed	1	140		\N	The story begins with ten-year-old Daniel Sempere, whose father—a widowed antiquarian bookseller—takes him to a secret sanctuary known as the Cemetery of Forgotten Books. There, Daniel is told to "adopt" one book. He chooses a rare novel titled The Shadow of the Wind by a mysterious author named Julián Carax.	1000	\N
-9	f	Whipped	Jonaxx	Romance	\N	\N		2	803		2026-01-03	"Whipped" by Jonaxx follows the story of Entice Cassandra "Ice" Sanchez, a strong-willed and independent woman who finds herself entangled in a complicated relationship with Rage Joseff Del Fierro. The narrative explores the dynamics of their intense connection, characterized by a mix of deep affection and the challenges that come with their contrasting personalities and the expectations of their social circles. As Ice navigates her feelings, the story delves into themes of devotion and the lengths one is willing to go for love, often highlighting the "whipped" nature of Rage's feelings for her. Their journey is marked by emotional growth and the realization that true love requires both vulnerability and the strength to stand by one another despite the obstacles they face.	0	7
-\.
-
-
---
--- Data for Name: story_streaks; Type: TABLE DATA; Schema: public; Owner: Shane
---
-
-COPY public.story_streaks (story_id, last_read_date, current_streak, longest_streak) FROM stdin;
-\.
-
-
---
--- Data for Name: user_streak; Type: TABLE DATA; Schema: public; Owner: Shane
---
-
-COPY public.user_streak (user_id, last_read_date, current_streak, longest_streak) FROM stdin;
-7	2026-01-03	1	1
-1	2026-01-04	2	2
-\.
-
-
---
--- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: Shane
---
-
-COPY public.users (id, username, role, created_at, password, is_admin, longest_streak, last_read_date, current_streak) FROM stdin;
-2	user	user	2025-12-18 14:55:18.30009	user123	f	0	\N	0
-6	testuser	user	2025-12-18 17:39:41.104144	1234	f	0	\N	0
-7	shane	user	2026-01-03 14:43:20.928372	shane123	f	0	\N	0
-1	admin	admin	2025-12-15 15:04:16.049438	admin123	t	1	2026-01-07	1
-8	Kenneth	user	2026-01-07 17:05:54.643669	Kenneth123	f	0	\N	0
-9	Larah	user	2026-01-07 18:06:40.183661	Larah123	f	0	\N	0
-10	Nathan	user	2026-01-07 18:07:11.504846	Nathan123	f	0	\N	0
-11	MJ	user	2026-01-07 18:07:32.286362	MJ123	f	0	\N	0
-12	Lyka	user	2026-01-07 18:08:04.559068	Lyka123	f	0	\N	0
-13	Jadea	user	2026-01-07 18:08:23.817821	Jadea123	f	0	\N	0
-\.
-
-
---
--- Name: chapters_id_seq; Type: SEQUENCE SET; Schema: public; Owner: Shane
---
-
-SELECT pg_catalog.setval('public.chapters_id_seq', 7, true);
-
-
---
--- Name: stories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: Shane
---
-
-SELECT pg_catalog.setval('public.stories_id_seq', 9, true);
-
-
---
--- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: Shane
---
-
-SELECT pg_catalog.setval('public.users_id_seq', 14, true);
-
-
---
--- Name: chapters chapters_pkey; Type: CONSTRAINT; Schema: public; Owner: Shane
---
-
-ALTER TABLE ONLY public.chapters
-    ADD CONSTRAINT chapters_pkey PRIMARY KEY (id);
-
-
---
--- Name: reading_streak reading_streak_pkey; Type: CONSTRAINT; Schema: public; Owner: Shane
---
-
-ALTER TABLE ONLY public.reading_streak
-    ADD CONSTRAINT reading_streak_pkey PRIMARY KEY (id);
-
-
---
--- Name: stories stories_pkey; Type: CONSTRAINT; Schema: public; Owner: Shane
---
-
-ALTER TABLE ONLY public.stories
-    ADD CONSTRAINT stories_pkey PRIMARY KEY (id);
-
-
---
--- Name: story_streaks story_streaks_pkey; Type: CONSTRAINT; Schema: public; Owner: Shane
---
-
-ALTER TABLE ONLY public.story_streaks
-    ADD CONSTRAINT story_streaks_pkey PRIMARY KEY (story_id);
-
-
---
--- Name: user_streak user_streak_pkey; Type: CONSTRAINT; Schema: public; Owner: Shane
---
-
-ALTER TABLE ONLY public.user_streak
-    ADD CONSTRAINT user_streak_pkey PRIMARY KEY (user_id);
-
-
---
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: Shane
---
-
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
-
-
---
--- Name: users users_username_key; Type: CONSTRAINT; Schema: public; Owner: Shane
---
-
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_username_key UNIQUE (username);
-
-
---
--- Name: chapters chapters_story_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: Shane
---
-
-ALTER TABLE ONLY public.chapters
-    ADD CONSTRAINT chapters_story_id_fkey FOREIGN KEY (story_id) REFERENCES public.stories(id) ON DELETE CASCADE;
-
-
---
--- Name: stories stories_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: Shane
---
-
-ALTER TABLE ONLY public.stories
-    ADD CONSTRAINT stories_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
-
-
---
--- Name: story_streaks story_streaks_story_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: Shane
---
-
-ALTER TABLE ONLY public.story_streaks
-    ADD CONSTRAINT story_streaks_story_id_fkey FOREIGN KEY (story_id) REFERENCES public.stories(id) ON DELETE CASCADE;
-
-
---
--- Name: user_streak user_streak_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: Shane
---
-
-ALTER TABLE ONLY public.user_streak
-    ADD CONSTRAINT user_streak_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
-
-
---
--- PostgreSQL database dump complete
---
-
-\unrestrict I5003rgaZxHcbTJ3hZGaov4PwkeEighmVFtEjGtK5XsUH5uw0skoTRA3OM5qVTu
-
+import tkinter as tk
+from tkinter import ttk, messagebox
+import psycopg2
+from datetime import date
+import pyttsx3
+import threading
+import tempfile
+import os
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+import pygame
+
+
+engine = pyttsx3.init()
+pygame.mixer.init()
+
+
+
+# ---------- PostgreSQL config ----------
+DB_HOST = "localhost"
+DB_NAME = "tale_keeper"
+DB_USER = "Shane"
+DB_PASSWORD = "081824"
+DB_PORT = "5432"
+
+
+BG_MAIN = "#ffccdd"
+BG_HEADER = "#a7c7ff"
+
+# ---------- DB connection ----------
+def get_connection():
+    return psycopg2.connect(
+        host=DB_HOST,
+        database=DB_NAME,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        port=DB_PORT
+    )
+
+# ---------- window centering helper ----------
+def center_window(win, w, h):
+    win.update_idletasks()
+    screen_w = win.winfo_screenwidth()
+    screen_h = win.winfo_screenheight()
+    x = int((screen_w - w) / 2)
+    y = int((screen_h - h) / 2)
+    win.geometry(f"{w}x{h}+{x}+{y}")
+
+# ---------- streak helpers ----------
+def update_streak_on_read():
+    global current_user_id
+
+    if not current_user_id:
+        return
+
+    today = date.today()
+
+    con = get_connection()
+    cur = con.cursor()
+
+    cur.execute("""
+        SELECT last_read_date, current_streak, longest_streak
+        FROM users
+        WHERE id = %s
+    """, (current_user_id,))
+    row = cur.fetchone()
+
+    last_read, current_streak, longest_streak = row or (None, 0, 0)
+
+    if last_read == today:
+        messagebox.showinfo("Streak", "Today's read is already counted.")
+        con.close()
+        return
+
+    if last_read and (today - last_read).days == 1:
+        current_streak += 1
+    else:
+        current_streak = 1
+
+    longest_streak = max(longest_streak, current_streak)
+
+    cur.execute("""
+        UPDATE users
+        SET last_read_date=%s,
+            current_streak=%s,
+            longest_streak=%s
+        WHERE id=%s
+    """, (today, current_streak, longest_streak, current_user_id))
+
+    con.commit()
+    con.close()
+
+    streak_lbl.config(text=f"Current streak: {current_streak} day(s)")
+    longest_lbl.config(text=f"Longest streak: {longest_streak} day(s)")
+
+# ---------- stories + chapters helpers ----------
+def init_stories_table():
+    con = get_connection()
+    cur = con.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS stories (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
+            favorite BOOLEAN DEFAULT FALSE,
+            title TEXT NOT NULL,
+            author TEXT,
+            genre TEXT,
+            date_started DATE,
+            date_completed DATE,
+            status TEXT,
+            num_chapters INTEGER DEFAULT 0,
+            word_count INTEGER DEFAULT 0,
+            main_character TEXT,
+            last_updated DATE,
+            preview TEXT DEFAULT ''
+        )
+    """)
+    con.commit()
+    con.close()
+
+def get_story_word_count(story_id):
+    con = get_connection()
+    cur = con.cursor()
+
+    cur.execute("""
+        SELECT COALESCE(SUM(
+            array_length(string_to_array(content, ' '), 1)
+        ), 0)
+        FROM chapters
+        WHERE story_id = %s
+    """, (story_id,))
+
+    total_words = cur.fetchone()[0]
+    con.close()
+    return total_words
+
+def init_chapters_table():
+    con = get_connection()
+    cur = con.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS chapters (
+            id SERIAL PRIMARY KEY,
+            story_id INTEGER NOT NULL REFERENCES stories(id) ON DELETE CASCADE,
+            chapter_no INTEGER NOT NULL,
+            content TEXT NOT NULL
+        )
+    """)
+    con.commit()
+    con.close()
+
+def get_next_chapter_no(story_id):
+    con = get_connection()
+    cur = con.cursor()
+    cur.execute("SELECT COALESCE(MAX(chapter_no), 0) FROM chapters WHERE story_id = %s",
+                (story_id,))
+    max_no = cur.fetchone()[0]
+    con.close()
+    return max_no + 1
+
+def get_story_word_count(story_id):
+    con = get_connection()
+    cur = con.cursor()
+    cur.execute("""
+        SELECT COALESCE(SUM(array_length(string_to_array(content, ' '), 1)), 0)
+        FROM chapters
+        WHERE story_id = %s
+    """, (story_id,))
+    total_words = cur.fetchone()[0]
+    con.close()
+    return total_words
+
+def load_stories_to_tree():
+    for item in tree.get_children():
+        tree.delete(item)
+
+    con = get_connection()
+    cur = con.cursor()
+
+    if is_admin:
+        cur.execute("""
+            SELECT id, favorite, title, author, genre, date_started, date_completed,
+                   status, num_chapters, word_count, main_character, last_updated, preview
+            FROM stories
+            ORDER BY id
+        """)
+    else:
+        cur.execute("""
+            SELECT id, favorite, title, author, genre, date_started, date_completed,
+                   status, num_chapters, word_count, main_character, last_updated, preview
+            FROM stories
+            WHERE user_id = %s
+            ORDER BY id
+        """, (current_user_id,))
+
+    rows = cur.fetchall()
+    con.close()
+
+    for row in rows:
+        fav_icon = "★" if row[1] else ""
+        tree.insert("", "end", values=(
+            row[0], fav_icon, row[2], row[3], row[4],
+            row[5] or "", row[6] or "", row[7] or "",
+            row[8] or 0, row[9] or 0, row[10] or "",
+            row[11] or "", row[12] or ""
+        ))
+
+def save_story_to_db():
+    global current_user_id
+
+    con = get_connection()
+    cur = con.cursor()
+    cur.execute("""
+        INSERT INTO stories (
+            user_id, favorite, title, author, genre,
+            date_started, date_completed, status,
+            num_chapters, word_count, main_character,
+            last_updated, preview
+        )
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    """, (
+        current_user_id,
+        fav_var.get(),
+        story_title.get(),
+        author_entry.get(),
+        genre_var.get(),
+        date_started.get() or None,
+        date_completed.get() or None,
+        status_var.get(),
+        int(num_chaps.get() or 0),
+        int(word_count.get() or 0),
+        main_char.get(),
+        last_upd.get() or None,
+        preview_text.get("1.0", "end").strip()
+    ))
+
+    con.commit()
+    con.close()
+    load_stories_to_tree()
+    clear_form()
+    messagebox.showinfo("Success", "Story created!")
+
+
+
+def update_story_in_db():
+    sel = tree.selection()
+    if not sel:
+        messagebox.showwarning("Update", "Please select a story to update.")
+        return
+
+    story_id = tree.item(sel[0], "values")[0]
+
+    # 🔐 Permission check
+    if not is_admin and selected_story_owner != current_user_id:
+        messagebox.showerror(
+            "Permission Denied",
+            "You can only edit your own stories."
+        )
+        return
+    sel = tree.selection()
+
+    con = get_connection()
+    cur = con.cursor()
+    cur.execute("""
+        UPDATE stories
+       SET favorite = %s, title = %s, author = %s, genre = %s,
+    date_started = %s, date_completed = %s, status = %s,
+    num_chapters = %s, word_count = %s, main_character = %s,
+    last_updated = %s, preview = %s
+
+        WHERE id = %s
+    """, (
+        fav_var.get(),
+        story_title.get(),
+        author_entry.get(),
+        genre_var.get(),
+        date_started.get() or None,
+        date_completed.get() or None,
+        status_var.get(),
+        int(num_chaps.get() or 0),
+        int(word_count.get() or 0),
+        main_char.get(),
+        last_upd.get() or None,
+        preview_text.get("1.0", "end").strip(),
+        story_id
+    ))
+    con.commit()
+    con.close()
+    load_stories_to_tree()
+    messagebox.showinfo("Success", "Story updated!")
+
+def delete_story_from_db():
+    sel = tree.selection()
+    if not sel:
+        messagebox.showwarning("Delete", "Please select a story to delete.")
+        return
+
+    story_id = tree.item(sel[0], "values")[0]
+
+    # 🔐 Permission check
+    if not is_admin and selected_story_owner != current_user_id:
+        messagebox.showerror(
+            "Permission Denied",
+            "You can only delete your own stories."
+        )
+        return
+
+    if not messagebox.askyesno("Confirm Delete", "Delete this story?"):
+        return
+
+    con = get_connection()
+    cur = con.cursor()
+    cur.execute("DELETE FROM stories WHERE id = %s", (story_id,))
+    con.commit()
+    con.close()
+
+    load_stories_to_tree()
+    clear_form()
+    messagebox.showinfo("Delete", "Story deleted successfully.")
+
+
+    story_id = tree.item(sel[0], "values")[0]
+
+    con = get_connection()
+    cur = con.cursor()
+    cur.execute("DELETE FROM stories WHERE id = %s", (story_id,))
+    con.commit()
+    con.close()
+    load_stories_to_tree()
+    clear_form()
+
+def search_stories():
+    search_term = story_title.get().lower()
+    if not search_term:
+        load_stories_to_tree()
+        return
+
+    for item in tree.get_children():
+        tree.delete(item)
+
+    con = get_connection()
+    cur = con.cursor()
+    cur.execute("""
+        SELECT id, favorite, title, author, genre, date_started, date_completed,
+               status, num_chapters, word_count, main_character, last_updated, preview
+        FROM stories
+        WHERE LOWER(title) LIKE %s OR LOWER(author) LIKE %s
+        ORDER BY id
+    """, (f'%{search_term}%', f'%{search_term}%'))
+    rows = cur.fetchall()
+    con.close()
+
+    for row in rows:
+        fav_icon = "★" if row[1] else ""
+        tree.insert("", "end", values=(
+            row[0], fav_icon, row[2], row[3], row[4],
+            row[5] or "", row[6] or "", row[7] or "",
+            row[8] or 0, row[9] or 0, row[10] or "",
+            row[11] or "", row[12] or ""
+        ))
+
+# ---------- globals ----------
+library_stories = []
+streak_lbl = None
+longest_lbl = None
+story_title = None
+author_entry = None
+genre_var = None
+date_started = None
+date_completed = None
+status_var = None
+num_chaps = None
+word_count = None
+main_char = None
+preview_text = None
+last_upd = None
+fav_var = None
+tree = None
+is_admin = False
+current_user_id = None
+selected_story_owner = None
+current_user_id = None
+is_admin = False
+
+
+
+def clear_form():
+    for e in (story_title, author_entry, date_started, date_completed,
+              num_chaps, word_count, main_char, last_upd):
+        e.delete(0, tk.END)
+    genre_var.set("")
+    status_var.set("")
+    fav_var.set(False)
+
+    if preview_text:
+        preview_text.delete("1.0", "end")
+
+# ---------- main app ----------
+def start_main_app(login_root):
+    global streak_lbl, longest_lbl, story_title, author_entry, genre_var
+    global date_started, date_completed, status_var, num_chaps
+    global word_count, main_char, last_upd, fav_var, tree, preview_text
+
+    login_root.withdraw()
+
+    root = tk.Toplevel(login_root)
+
+    def open_story_reader(story_id):
+        print("Story clicked:", story_id)
+
+    def logout():
+        global is_admin
+        if not messagebox.askyesno("Logout", "Are you sure you want to logout?"):
+            return
+        is_admin = False
+        root.destroy()
+        login_root.deiconify()
+
+    root.title("Story Shelf Record System")
+    root.configure(bg=BG_MAIN)
+    center_window(root, 1100, 600)
+
+    def on_close():
+        login_root.destroy()
+    root.protocol("WM_DELETE_WINDOW", on_close)
+
+    title_lbl = tk.Label(root, text="Writers Haven",
+                         font=("Monotype Corsiva", 24, "bold"),
+                         bg=BG_HEADER)
+    title_lbl.pack(fill="x")
+
+    top_row = tk.Frame(root, bg=BG_MAIN)
+    top_row.pack(fill="x", padx=10, pady=5)
+
+    form_frame = tk.Frame(top_row, bg=BG_MAIN)
+    form_frame.pack(side="left", fill="x", expand=True)
+
+    top_row_right = tk.Frame(top_row, bg=BG_MAIN)
+    top_row_right.pack(side="right", fill="y")
+
+    # --- Collapsible Top 10 Streaks (LEFT) ---
+    leaderboard_container = tk.Frame(top_row_right, bg=BG_MAIN)
+    leaderboard_container.pack(side="left", fill="y", padx=(0, 3))
+
+    streak_visible = tk.BooleanVar(value=True)
+
+    leaderboard_frame = tk.LabelFrame(
+        leaderboard_container,
+        text="Top 10 Streaks",
+        bg=BG_MAIN,
+        font=("Monotype Corsiva", 10, "italic")
+    )
+    leaderboard_frame.pack(fill="both", expand=True)
+
+    def toggle_streak_panel():
+        if streak_visible.get():
+            leaderboard_frame.pack_forget()
+            toggle_btn.config(text="▶ Show Top 10")
+            streak_visible.set(False)
+        else:
+            leaderboard_frame.pack(fill="both", expand=True)
+            toggle_btn.config(text="▼ Hide Top 10")
+            streak_visible.set(True)
+
+    toggle_btn = tk.Button(
+        leaderboard_container,
+        text="▼ Hide Top 10",
+        command=toggle_streak_panel,
+        bg=BG_HEADER,
+        fg="white",
+        font=("Monotype Corsiva", 9, "bold"),
+        cursor="hand2"
+    )
+    toggle_btn.pack(fill="x", pady=(0, 4))
+
+    cols = ("Rank", "User", "Longest")
+
+    streak_tree = ttk.Treeview(
+        leaderboard_frame,
+        columns=cols,
+        show="headings",
+        height=8
+    )
+
+    for col in cols:
+        streak_tree.heading(col, text=col)
+        streak_tree.column(col, anchor="center", width=80)
+
+    streak_tree.pack(fill="both", expand=True, padx=5, pady=5)
+
+    def load_top_streaks():
+        for item in streak_tree.get_children():
+            streak_tree.delete(item)
+
+        try:
+            con = get_connection()
+            cur = con.cursor()
+            cur.execute("""
+                SELECT username, longest_streak
+                FROM users
+                ORDER BY longest_streak DESC
+                LIMIT 10
+            """)
+            rows = cur.fetchall()
+            con.close()
+
+            for rank, (username, longest) in enumerate(rows, start=1):
+                streak_tree.insert("", "end", values=(rank, username, longest))
+
+        except Exception as e:
+            messagebox.showerror("Top 10 Error", str(e))
+
+    def add_row(row, col, text, width=22):
+        lbl = tk.Label(form_frame, text=text, bg=BG_MAIN,
+                       font=("Monotype Corsiva", 11))
+        lbl.grid(row=row, column=col, sticky="w", padx=4, pady=3)
+        ent = tk.Entry(form_frame, width=width)
+        ent.grid(row=row, column=col + 1, padx=4, pady=3)
+        return ent
+
+    global story_title, author_entry, genre_var, date_started, date_completed
+    global status_var, num_chaps, word_count, main_char, last_upd, fav_var
+
+    story_title = add_row(0, 0, "Story Title:")
+    author_entry = add_row(0, 2, "Author:")
+
+    genre_combo_lbl = tk.Label(form_frame, text="Genre:", bg=BG_MAIN,
+                               font=("Monotype Corsiva", 11))
+    genre_combo_lbl.grid(row=0, column=4, sticky="w", padx=4, pady=3)
+    genre_var = tk.StringVar()
+    genre_combo = ttk.Combobox(
+        form_frame, textvariable=genre_var,
+        values=["Romance", "Drama", "Fantasy", "Mystery", "Horror",
+                "Adventure", "Comedy", "Sci-Fi", "Historical", "Others"],
+        width=18, state="readonly"
+    )
+    genre_combo.grid(row=0, column=5, padx=4, pady=3)
+
+    date_started = add_row(1, 0, "Date Started:")
+    date_completed = add_row(1, 2, "Date Completed:")
+
+    status_lbl = tk.Label(form_frame, text="Story Status:", bg=BG_MAIN,
+                          font=("Monotype Corsiva", 11))
+    status_lbl.grid(row=1, column=4, sticky="w", padx=4, pady=3)
+    status_var = tk.StringVar()
+    status_combo = ttk.Combobox(
+        form_frame, textvariable=status_var,
+        values=["Ongoing", "Completed", "Hiatus"],
+        width=18, state="readonly"
+    )
+    status_combo.grid(row=1, column=5, padx=4, pady=3)
+
+    num_chaps = add_row(2, 0, "Num Chapters:")
+    word_count = add_row(2, 2, "Word Count:")
+    main_char = add_row(3, 0, "Main Character:")
+    last_upd = add_row(3, 2, "Last Updated:")
+
+    # ---- Preview / Synopsis ----
+    preview_lbl = tk.Label(
+        form_frame,
+        text="Preview / Synopsis:",
+        bg=BG_MAIN,
+        font=("Monotype Corsiva", 11)
+    )
+    preview_lbl.grid(row=4, column=0, sticky="nw", padx=4, pady=3)
+
+    preview_text = tk.Text(form_frame, width=55, height=3)
+    preview_text.grid(row=4, column=1, columnspan=5, padx=4, pady=3)
+
+    right_frame = tk.Frame(top_row, bg=BG_MAIN, bd=2, relief="groove")
+    right_frame.pack(side="right", fill="y", padx=(10, 0))
+
+    fav_frame = tk.LabelFrame(right_frame, text="Favorite Story",
+                              bg=BG_MAIN, font=("Monotype Corsiva", 11, "italic"))
+    fav_frame.pack(fill="x", padx=5, pady=5)
+
+    def toggle_favorite():
+        sel = tree.selection()
+        if not sel:
+            return
+        story_id = tree.item(sel[0], "values")[0]
+        con = get_connection()
+        cur = con.cursor()
+        cur.execute("UPDATE stories SET favorite = %s WHERE id = %s",
+                    (fav_var.get(), story_id))
+        con.commit()
+        con.close()
+        load_stories_to_tree()
+        load_top_streaks()
+
+    fav_var = tk.BooleanVar()
+    fav_check = tk.Checkbutton(
+        fav_frame,
+        text="★ Mark as Favorite",
+        variable=fav_var,
+        bg=BG_MAIN,
+        command=toggle_favorite
+    )
+    fav_check.pack(anchor="w")
+
+    streak_frame = tk.LabelFrame(right_frame, text="Writing Streak",
+                                 bg=BG_MAIN, font=("Monotype Corsiva", 11, "italic"))
+    streak_frame.pack(fill="x", padx=5, pady=5)
+    streak_lbl_local = tk.Label(streak_frame, text="Current streak: 0 day(s)",
+                                bg=BG_MAIN, font=("Monotype Corsiva", 10))
+    streak_lbl_local.pack(anchor="w")
+    longest_lbl_local = tk.Label(streak_frame, text="Longest streak: 0 day(s)",
+                                 bg=BG_MAIN, font=("Monotype Corsiva", 10))
+    longest_lbl_local.pack(anchor="w")
+
+    globals()["streak_lbl"] = streak_lbl_local
+    globals()["longest_lbl"] = longest_lbl_local
+
+    progress_frame = tk.LabelFrame(right_frame, text="Progress",
+                                   bg=BG_MAIN, font=("Monotype Corsiva", 11, "italic"))
+    progress_frame.pack(fill="x", padx=5, pady=5)
+    progress_lbl = tk.Label(
+        progress_frame,
+        text="Words written: 0",
+        bg=BG_MAIN,
+        font=("Monotype Corsiva", 10)
+    )
+    progress_lbl.pack(anchor="w")
+
+    globals()["progress_lbl"] = progress_lbl
+
+    btn_frame = tk.Frame(root, bg=BG_MAIN)
+    btn_frame.pack(fill="x", padx=10, pady=5)
+
+    tk.Button(btn_frame, text="Create Story", width=15,
+              command=save_story_to_db, bg=BG_MAIN,
+              font=("Monotype Corsiva", 10)).pack(side="left", padx=3)
+    tk.Button(btn_frame, text="Update Record", width=15,
+              command=update_story_in_db, bg=BG_MAIN,
+              font=("Monotype Corsiva", 10)).pack(side="left", padx=3)
+    tk.Button(btn_frame, text="Search Story", width=15,
+              command=search_stories, bg=BG_MAIN,
+              font=("Monotype Corsiva", 10)).pack(side="left", padx=3)
+    tk.Button(btn_frame, text="Clear Record", width=15,
+              command=clear_form, bg=BG_MAIN,
+              font=("Monotype Corsiva", 10)).pack(side="left", padx=3)
+    tk.Button(btn_frame, text="Delete Record", width=15,
+              command=delete_story_from_db, bg="#ff9999",
+              font=("Monotype Corsiva", 10)).pack(side="left", padx=3)
+
+    table_frame = tk.Frame(root, bg=BG_MAIN)
+    table_frame.pack(fill="both", expand=True, padx=10, pady=5)
+
+    columns = ("ID", "Fav", "Title", "Author", "Genre", "Start Date",
+               "End Date", "Status", "Chaps", "Words", "Main Char",
+               "Updated", "Preview")
+
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=("Monotype Corsiva", 11, "bold"))
+    style.configure("Treeview", font=("Monotype Corsiva", 10))
+
+    tree_local = ttk.Treeview(table_frame, columns=columns,
+                              show="headings", height=10)
+    for col in columns:
+        tree_local.heading(col, text=col)
+        tree_local.column(col, width=80, anchor="center")
+    tree_local.column("Title", width=180, anchor="w")
+    tree_local.column("Main Char", width=120, anchor="w")
+
+    vsb = ttk.Scrollbar(table_frame, orient="vertical",
+                        command=tree_local.yview)
+    tree_local.configure(yscrollcommand=vsb.set)
+    tree_local.pack(side="left", fill="both", expand=True)
+    vsb.pack(side="right", fill="y")
+
+    globals()["tree"] = tree_local
+
+    def on_row_select(event):
+        selected = tree_local.selection()
+        if not selected:
+            return
+
+        item = tree_local.item(selected[0])
+        values = item["values"]
+
+        story_id = int(values[0])
+        # 🔐 Check story ownership
+        con = get_connection()
+        cur = con.cursor()
+        cur.execute("SELECT user_id FROM stories WHERE id = %s", (story_id,))
+        owner_id = cur.fetchone()[0]
+        con.close()
+
+        # Save ownership info globally
+        globals()["selected_story_owner"] = owner_id
+
+        # Fill form
+        clear_form()
+        story_title.insert(0, values[2])
+        author_entry.insert(0, values[3])
+        genre_var.set(values[4] or "")
+        date_started.insert(0, values[5])
+        date_completed.insert(0, values[6])
+        status_var.set(values[7] or "")
+        num_chaps.insert(0, str(values[8] or ""))
+        word_count.insert(0, str(values[9] or ""))
+        main_char.insert(0, values[10] or "")
+        last_upd.insert(0, values[11] or "")
+        fav_var.set(values[1] == "★")
+
+        preview_text.delete("1.0", "end")
+        preview_text.insert("1.0", values[12] or "")
+
+        # Update progress label ONLY
+        total_words = get_story_word_count(story_id)
+        progress_lbl.config(text=f"Words written: {total_words}")
+
+        # 🔁 Sync DB word_count automatically
+        con = get_connection()
+        cur = con.cursor()
+        cur.execute("""
+            UPDATE stories
+            SET word_count = %s
+            WHERE id = %s
+        """, (total_words, story_id))
+        con.commit()
+        con.close()
+
+    tree_local.bind("<<TreeviewSelect>>", on_row_select)
+
+    bottom_frame = tk.Frame(root, bg=BG_MAIN)
+    bottom_frame.pack(fill="x", padx=10, pady=5)
+
+    def open_read_window_for_story(story_row):
+        story_id = int(story_row[0])
+        title = story_row[2]
+        author = story_row[3]
+
+        update_streak_on_read()
+
+        win = tk.Toplevel(root)
+        win.title(f"Read: {title}")
+        win.configure(bg=BG_MAIN)
+        center_window(win, 600, 450)
+
+        header = tk.Label(win, text=title,
+                          font=("Monotype Corsiva", 18, "bold"),
+                          bg=BG_HEADER)
+        header.pack(fill="x")
+
+        tk.Label(win, text=f"by {author}",
+                 font=("Monotype Corsiva", 12),
+                 bg=BG_MAIN).pack(pady=5)
+
+        text = tk.Text(win, wrap="word", bg="white")
+        text.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # Load chapters (DO NOT TOUCH)
+        con = get_connection()
+        cur = con.cursor()
+        cur.execute("""
+            SELECT chapter_no, content
+            FROM chapters
+            WHERE story_id = %s
+            ORDER BY chapter_no
+        """, (story_id,))
+        chapters = cur.fetchall()
+        con.close()
+
+        if not chapters:
+            text.insert("1.0", "No chapters saved yet.\n\nUse 'New Chapter' to add one.")
+        else:
+            for chap_no, content in chapters:
+                text.insert("end", f"Chapter {chap_no}\n", ("chap_title",))
+                text.insert("end", content + "\n\n")
+
+        text.tag_config("chap_title", font=("Monotype Corsiva", 12, "bold"))
+        text.config(state="disabled")
+
+        # ---------- AUDIO PLAYER UI ----------
+        player_frame = tk.Frame(win, bg=BG_MAIN)
+        player_frame.pack(fill="x", padx=10, pady=5)
+
+        tk.Button(
+            player_frame, text="▶ Play",
+            font=("Monotype Corsiva", 11),
+            command=lambda: play_audio()
+        ).pack(side="left", padx=5)
+
+        tk.Button(
+            player_frame, text="⏸ Pause",
+            font=("Monotype Corsiva", 11),
+            command=pause_audio
+        ).pack(side="left", padx=5)
+
+        tk.Button(
+            player_frame, text="▶ Resume",
+            font=("Monotype Corsiva", 11),
+            command=resume_audio
+        ).pack(side="left", padx=5)
+
+        tk.Button(
+            player_frame, text="⏹ Stop",
+            font=("Monotype Corsiva", 11),
+            command=stop_audio
+        ).pack(side="left", padx=5)
+
+        # Convert full story text to audio
+        full_text = ""
+        for chap_no, content in chapters:
+            full_text += f"Chapter {chap_no}\n{content}\n\n"
+
+        if full_text.strip():
+            chapter_to_audio(full_text)
+
+
+    def read_story():
+        selected = tree_local.selection()
+        if not selected:
+            messagebox.showwarning("Read Story", "Please select a story first.")
+            return
+
+        item = tree_local.item(selected[0])
+        values = item["values"]
+
+        open_read_window_for_story(values)
+
+    # ---------- audio helpers ----------
+    AUDIO_FILE = "chapter_audio.wav"
+
+    def chapter_to_audio(text):
+        if os.path.exists(AUDIO_FILE):
+            os.remove(AUDIO_FILE)
+
+        engine.save_to_file(text, AUDIO_FILE)
+        engine.runAndWait()
+        return AUDIO_FILE
+
+    def play_audio():
+        if not os.path.exists(AUDIO_FILE):
+            return
+        pygame.mixer.music.load(AUDIO_FILE)
+        pygame.mixer.music.play()
+
+    def pause_audio():
+        pygame.mixer.music.pause()
+
+    def resume_audio():
+        pygame.mixer.music.unpause()
+
+    def stop_audio():
+        pygame.mixer.music.stop()
+
+    def add_to_library():
+        sel = tree_local.selection()
+        if not sel:
+            messagebox.showwarning("Library", "Please select a story to add.")
+            return
+
+        values = tree_local.item(sel[0], "values")
+        story_id = int(values[0])  # force correct type
+
+        library_stories.append(story_id)
+        messagebox.showinfo("Library", "Story added to your library.")
+
+    def open_library():
+        if not library_stories:
+            messagebox.showinfo("Library", "Your library is empty.")
+            return
+
+        win = tk.Toplevel(root)
+        win.title("My Library")
+        win.configure(bg=BG_MAIN)
+        center_window(win, 650, 520)
+
+        header = tk.Label(
+            win, text="MY LIBRARY", bg=BG_HEADER,
+            font=("Monotype Corsiva", 16, "bold"), anchor="w"
+        )
+        header.pack(fill="x")
+
+        shelf_frame = tk.Frame(win, bg=BG_MAIN)
+        shelf_frame.pack(fill="both", expand=True, padx=20, pady=20)
+
+        max_cols = 4
+
+        for index, story_id in enumerate(library_stories):
+            con = get_connection()
+            cur = con.cursor()
+            cur.execute("""
+                SELECT id, title, author, genre
+                FROM stories
+                WHERE id = %s
+            """, (story_id,))
+            row_val = cur.fetchone()
+            if not row_val:
+                continue
+
+            con.close()
+
+            cols = 4
+            r = index // cols
+            c = index % cols
+
+            tile = tk.Frame(
+                shelf_frame, bg=BG_MAIN, bd=0,
+                width=130, height=130
+            )
+            tile.grid(row=r, column=c, padx=20, pady=20)
+            tile.grid_propagate(False)
+
+            canvas = tk.Canvas(tile, width=90, height=70,
+                               bg=BG_MAIN, highlightthickness=0)
+            canvas.pack(pady=(5, 0))
+
+            canvas.create_rectangle(8, 10, 82, 60, outline="#444")
+            canvas.create_arc(20, 40, 70, 80, start=0, extent=180,
+                              style="arc", outline="#444")
+            canvas.create_line(45, 10, 45, 58, fill="#444")
+            canvas.create_arc(10, 20, 50, 70, start=200, extent=140,
+                              style="arc", outline="#444")
+            canvas.create_arc(40, 20, 80, 70, start=200, extent=140,
+                              style="arc", outline="#444")
+            canvas.create_line(6, 12, 6, 58, fill="#444")
+            canvas.create_line(84, 12, 84, 58, fill="#444")
+
+            title_text = row_val[1] or "Title of the Story"
+            lbl = tk.Label(
+                tile, text=title_text, bg=BG_MAIN,
+                font=("Monotype Corsiva", 10)
+            )
+            lbl.pack(pady=(6, 0))
+
+            def make_handler(row_copy=row_val):
+                tree_style_row = (
+                    row_copy[0],  # id
+                    "",  # fav placeholder
+                    row_copy[1],  # title
+                    row_copy[2],  # author
+                    row_copy[3],  # genre
+                )
+                return lambda e=None: open_read_window_for_story(tree_style_row)
+
+            tile.bind("<Button-1>", make_handler())
+            canvas.bind("<Button-1>", make_handler())
+            lbl.bind("<Button-1>", make_handler())
+
+        for i in range(max_cols):
+            shelf_frame.grid_columnconfigure(i, weight=1)
+
+    def edit_chapter():
+        sel = tree_local.selection()
+        if not sel:
+            messagebox.showwarning("Edit Chapter", "Select a story first.")
+            return
+
+        story_id = tree_local.item(sel[0], "values")[0]
+
+        if not is_admin and selected_story_owner != current_user_id:
+            messagebox.showerror(
+                "Permission Denied",
+                "You can only edit chapters of your own stories."
+            )
+            return
+
+        con = get_connection()
+        cur = con.cursor()
+        cur.execute("""
+            SELECT id, chapter_no, content
+            FROM chapters
+            WHERE story_id = %s
+            ORDER BY chapter_no
+        """, (story_id,))
+        chapters = cur.fetchall()
+        con.close()
+
+        if not chapters:
+            messagebox.showinfo("Edit Chapter", "No chapters to edit.")
+            return
+
+        win = tk.Toplevel(root)
+        win.title("Edit Chapter")
+        win.configure(bg=BG_MAIN)
+        center_window(win, 600, 450)
+
+        # ---------- HEADER ----------
+        header = tk.Label(
+            win,
+            text="Edit Chapter",
+            font=("Monotype Corsiva", 16, "bold"),
+            bg=BG_HEADER
+        )
+        header.pack(fill="x")
+
+        # ---------- CONTENT FRAME ----------
+        content = tk.Frame(win, bg=BG_MAIN)
+        content.pack(fill="both", expand=True, padx=10, pady=10)
+
+        chapter_var = tk.IntVar(value=chapters[0][0])
+
+        tk.Label(
+            content,
+            text="Select Chapter:",
+            bg=BG_MAIN,
+            font=("Monotype Corsiva", 11)
+        ).pack(anchor="w")
+
+        combo = ttk.Combobox(
+            content,
+            values=[f"Chapter {c[1]}" for c in chapters],
+            state="readonly",
+            width=30
+        )
+        combo.pack(pady=5)
+
+        text = tk.Text(
+            content,
+            wrap="word",
+            bg="white",
+            font=("Georgia", 11)
+        )
+        text.pack(fill="both", expand=True, pady=10)
+
+        def load_chapter(event=None):
+            idx = combo.current()
+            chap_id, chap_no, content = chapters[idx]
+            chapter_var.set(chap_id)
+            text.delete("1.0", "end")
+            text.insert("1.0", content)
+
+        combo.current(0)
+        load_chapter()
+        combo.bind("<<ComboboxSelected>>", load_chapter)
+
+        def save_changes():
+            con = get_connection()
+            cur = con.cursor()
+            cur.execute("""
+                UPDATE chapters
+                SET content = %s
+                WHERE id = %s
+            """, (text.get("1.0", "end").strip(), chapter_var.get()))
+            con.commit()
+            con.close()
+            messagebox.showinfo("Edit Chapter", "Chapter updated successfully.")
+            win.destroy()
+
+        tk.Button(
+            win,
+            text="Save Changes",
+            command=save_changes,
+            bg=BG_HEADER,
+            fg="white",
+            font=("Monotype Corsiva", 11, "bold"),
+            width=15
+        ).pack(pady=8)
+
+    def add_new_chapter():
+
+        sel = tree_local.selection()
+        if not sel:
+            messagebox.showwarning("New Chapter", "Please select a story first.")
+            return
+        values = tree_local.item(sel[0], "values")
+        story_id = values[0]
+
+        win = tk.Toplevel(root)
+        win.title(f"New Chapter for: {values[2]}")
+        win.configure(bg=BG_MAIN)
+        center_window(win, 500, 400)
+
+        header = tk.Label(win, text=f"New Chapter - {values[2]}",
+                          font=("Monotype Corsiva", 16, "bold"),
+                          bg=BG_HEADER)
+        header.pack(fill="x")
+
+        chapter_text = tk.Text(win, wrap="word", bg="white")
+        chapter_text.pack(fill="both", expand=True, padx=10, pady=10)
+
+
+
+        def save_chapter():
+            content = chapter_text.get("1.0", "end").strip()
+            if not content:
+                messagebox.showwarning("New Chapter", "Chapter is empty.")
+                return
+
+            chap_no = get_next_chapter_no(story_id)
+
+            con = get_connection()
+            cur = con.cursor()
+            cur.execute("""
+                INSERT INTO chapters (story_id, chapter_no, content)
+                VALUES (%s, %s, %s)
+            """, (story_id, chap_no, content))
+            con.commit()
+            con.close()
+
+            con = get_connection()
+            cur = con.cursor()
+            cur.execute("""
+                UPDATE stories
+                SET num_chapters = COALESCE(num_chapters, 0) + 1,
+                    last_updated = %s
+                WHERE id = %s
+            """, (date.today(), story_id))
+            con.commit()
+            con.close()
+
+            load_stories_to_tree()
+            messagebox.showinfo("New Chapter", f"Chapter {chap_no} saved.")
+            win.destroy()
+
+        tk.Button(win, text="Save Chapter",
+                  command=save_chapter,
+                  bg=BG_MAIN,
+                  font=("Monotype Corsiva", 11)).pack(pady=5)
+
+    def open_user_manager():
+        if not is_admin:
+            messagebox.showerror("Permission", "Only admins can view users.")
+            return
+
+        win = tk.Toplevel(root)
+        win.title("Manage Users")
+        win.geometry("500x350")
+
+        tk.Label(
+            win,
+            text="Registered Users",
+            font=("Arial", 14, "bold")
+        ).pack(pady=10)
+
+        user_tree = ttk.Treeview(
+            win,
+            columns=("ID", "Username", "Role"),
+            show="headings"
+        )
+
+        user_tree.heading("ID", text="ID")
+        user_tree.heading("Username", text="Username")
+        user_tree.heading("Role", text="Role")
+
+        user_tree.column("ID", width=60, anchor="center")
+        user_tree.column("Username", width=200)
+        user_tree.column("Role", width=100, anchor="center")
+
+        user_tree.pack(fill="both", expand=True, padx=10, pady=5)
+
+        # Load users from database
+        try:
+            con = get_connection()
+            cur = con.cursor()
+            cur.execute("SELECT id, username, is_admin FROM users ORDER BY id")
+            for uid, uname, admin_flag in cur.fetchall():
+                role = "Admin" if admin_flag else "User"
+                user_tree.insert("", "end", values=(uid, uname, role))
+            con.close()
+        except Exception as e:
+            messagebox.showerror("Database Error", str(e))
+
+    tk.Button(bottom_frame, text="Read Story", width=12,
+              command=read_story, bg=BG_MAIN,
+              font=("Monotype Corsiva", 10)).pack(side="left", padx=3)
+    tk.Button(bottom_frame, text="Add to Library", width=12,
+              command=add_to_library, bg=BG_MAIN,
+              font=("Monotype Corsiva", 10)).pack(side="left", padx=3)
+    tk.Button(bottom_frame, text="My Library", width=12,
+              command=open_library, bg=BG_MAIN,
+              font=("Monotype Corsiva", 10)).pack(side="left", padx=3)
+    tk.Button(bottom_frame, text="New Chapter", width=12,
+              command=add_new_chapter, bg=BG_MAIN,
+              font=("Monotype Corsiva", 10)).pack(side="left", padx=3)
+    tk.Button(
+        bottom_frame,
+        text="Edit Chapter",
+        width=12,
+        command=edit_chapter,
+        bg=BG_MAIN,
+        font=("Monotype Corsiva", 10)
+    ).pack(side="left", padx=3)
+
+    if is_admin:
+        tk.Button(
+            bottom_frame,
+            text="Manage Users",
+            width=12,
+            command=open_user_manager,
+            bg=BG_MAIN,
+            font=("Monotype Corsiva", 10)
+        ).pack(side="left", padx=3)
+
+    tk.Button(
+        bottom_frame,
+        text="Logout",
+        width=12,
+        command=logout,
+        bg="#ff9999",
+        font=("Monotype Corsiva", 10)
+    ).pack(side="right", padx=6)
+
+    try:
+        init_stories_table()
+        init_chapters_table()
+        load_stories_to_tree()
+    except Exception as e:
+        messagebox.showerror(
+            "Database Error",
+            f"Failed to connect to PostgreSQL:\n{str(e)}"
+        )
+
+    load_top_streaks()
+
+
+# ---------- login ----------
+def main():
+    login_root = tk.Tk()
+    login_root.title("Writers Haven - Login")
+    login_root.configure(bg=BG_MAIN)
+    login_root.resizable(False, False)
+    center_window(login_root, 450, 320)
+
+    title_lbl = tk.Label(login_root, text="Writers Haven",
+                         font=("Monotype Corsiva", 24, "bold"),
+                         bg=BG_HEADER, fg="white")
+    title_lbl.pack(pady=20, fill="x")
+
+    form_frame = tk.Frame(login_root, bg=BG_MAIN)
+    form_frame.pack(pady=10, padx=20)
+
+    tk.Label(form_frame, text="Username:", bg=BG_MAIN,
+             font=("Monotype Corsiva", 12)).pack(pady=6, anchor="w")
+    username_entry = tk.Entry(form_frame, width=28, font=("Arial", 11))
+    username_entry.pack(pady=4)
+    username_entry.focus()
+
+    tk.Label(form_frame, text="Password:", bg=BG_MAIN,
+             font=("Monotype Corsiva", 12)).pack(pady=6, anchor="w")
+    password_entry = tk.Entry(form_frame, width=28, font=("Arial", 11), show="*")
+    password_entry.pack(pady=4)
+
+    def do_login():
+        global is_admin, current_user_id
+
+        u = username_entry.get().strip()
+        p = password_entry.get().strip()
+
+        if not u or not p:
+            messagebox.showerror("Login", "Please enter both username and password.")
+            return
+
+        try:
+            con = get_connection()
+            cur = con.cursor()
+            cur.execute(
+                "SELECT id, is_admin FROM users WHERE username=%s AND password=%s",
+                (u, p)
+            )
+            user = cur.fetchone()
+            con.close()
+
+            if user:
+                current_user_id = user[0]
+                is_admin = user[1]
+                start_main_app(login_root)
+            else:
+                messagebox.showerror("Login", "Invalid username or password.")
+                password_entry.delete(0, tk.END)
+                password_entry.focus()
+
+        except Exception as e:
+            messagebox.showerror("Login Error", str(e))
+
+    def do_register():
+        u = username_entry.get().strip()
+        p = password_entry.get().strip()
+
+        if not u or not p:
+            messagebox.showerror("Register", "Username and password required.")
+            return
+
+        try:
+            con = get_connection()
+            cur = con.cursor()
+            cur.execute(
+                "INSERT INTO users (username, password, is_admin) VALUES (%s, %s, %s)",
+                (u, p, False)
+            )
+
+            con.commit()
+            con.close()
+            messagebox.showinfo("Register", "Account created successfully.")
+        except Exception as e:
+            messagebox.showerror("Register Error", str(e))
+
+    password_entry.bind("<Return>", lambda e: do_login())
+
+    btn_frame = tk.Frame(login_root, bg=BG_MAIN)
+    btn_frame.pack(pady=15)
+
+    tk.Button(btn_frame, text="Login", width=12,
+              command=do_login, bg=BG_HEADER, fg="white",
+              font=("Monotype Corsiva", 11, "bold")).pack(side="left", padx=8)
+    tk.Button(btn_frame, text="Register", width=12,
+              command=do_register, bg=BG_HEADER, fg="white",
+              font=("Monotype Corsiva", 11, "bold")).pack(side="left", padx=8)
+    tk.Button(btn_frame, text="Exit", width=12,
+              command=login_root.destroy, bg="#ff9999",
+              font=("Monotype Corsiva", 11, "bold"),
+              cursor="hand2").pack(side="left", padx=8)
+
+    login_root.mainloop()
+
+if __name__ == "__main__":
+    main()
